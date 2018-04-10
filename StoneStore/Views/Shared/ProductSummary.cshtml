@@ -1,0 +1,49 @@
+﻿@model StoneStore.Models.Stone
+@using StoneStore.Models;
+@{ 
+    IEnumerable<Stone> Products = new db_StoneEntities().Stones;
+    List<string> sizeList = new List<string>();
+    List<string> property = Products.Where(p => p.Name == Model.Name).OrderByDescending(x => x.Size).Select(x => x.Size).ToList();
+    foreach (var item in property)
+    {
+        sizeList.Add(item.Trim() == "L" ? "Large" : item.Trim() == "M" ? "Medium" : item.Trim() == "S" ? "Small" : "Undefined");
+    }
+    ViewBag.AvailableSizes = String.Join(", ", sizeList.ToArray());
+    ViewBag.Price = Products.Where(p => p.Name == Model.Name).OrderBy(x => x.Price).First().Price;
+}
+
+@{
+    ViewBag.Title = "ProductSummary";
+}
+
+<div class="col-sm-2 col-lg-2 col-md-2">
+    <div class="thumbnail" style="height:375px;">
+        @*<img class="img-responsive center-block" width="150" height="150" src='@Url.Action("GetImage", "Product", new { Model.ProductID })' alt="@Model.Name" />*@
+        <div class="caption">
+            <h4 class="pull-right">@(ViewBag.Price.ToString("C"))</h4>
+            <h4>
+                <a href="#">@Model.Name</a>
+            </h4>
+            <p>Color: @Model.Color</p>
+            @Html.DropDownList("Sizes",
+                  new SelectList(sizeList.Skip(1)),
+         sizeList[0],
+         new { @class = "form-control", id = "SizeOptions", onchange = @setPrice() })
+            @{
+        void setPrice()
+        {
+            ViewBag.Price = Products.Where(x => x.Name == Model.Name && x.Size == "document.getElementById('SizeOptions').");
+        }
+            }
+        </div>
+        @using (Html.BeginForm("AddToCart", "Cart"))
+        {
+            <div style="position: absolute; bottom: 2em; left: 40%;">
+                @Html.HiddenFor(x => x.Id)
+                @Html.Hidden("returnUrl", Request.Url.PathAndQuery)
+                <input type="submit" class="btn btn-success" value="Add To Cart" />
+            </div>
+        }
+    </div>
+</div>
+

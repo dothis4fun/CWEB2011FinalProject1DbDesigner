@@ -1,0 +1,26 @@
+﻿@using PagedList;
+@using PagedList.Mvc;
+@model IPagedList<StoneStore.Models.Stone>
+
+@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    ViewBag.Title = "Products";
+}
+<div class="row">
+
+    <div class="row col-sm-offset-1 col-sm-12">
+        @foreach (var p in Model)
+        {
+            @Html.Partial("ProductSummary", p)
+        }
+        
+    </div>
+
+</div>
+<div class="row" style="width:inherit;">
+    <div class="text-center">
+        <div class="btn-group">
+            @Html.PagedListPager(Model, pageNumber => Url.Action("Index", new { pageNumber, Category = Request.QueryString["category"] }))
+        </div>
+    </div>
+</div>
