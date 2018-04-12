@@ -36,5 +36,18 @@ namespace StoneStore.Controllers
                 return null;
             }
         }
+
+        public PartialViewResult ProductSummary(Stone product)
+        {
+            return PartialView(product);
+        }
+
+        [HttpPost]
+        public ActionResult ProductSummary(string Sizes, string prodName)
+        {
+            string thisSize = Sizes[0].ToString();
+            Stone prod = db.Stones.Where(x => x.Name == prodName && x.Size == thisSize).First();
+            return View(prod);
+        }
     }
 }

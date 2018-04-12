@@ -9,7 +9,15 @@
         sizeList.Add(item.Trim() == "L" ? "Large" : item.Trim() == "M" ? "Medium" : item.Trim() == "S" ? "Small" : "Undefined");
     }
     ViewBag.AvailableSizes = String.Join(", ", sizeList.ToArray());
-    ViewBag.Price = Products.Where(p => p.Name == Model.Name).OrderBy(x => x.Price).First().Price;
+    if (IsPost)
+    {
+        ViewBag.Price = Model.Price;
+
+    }
+    else
+    {
+        ViewBag.Price = Products.Where(p => p.Name == Model.Name).OrderBy(x => x.Price).First().Price;
+    }
 }
 
 @{
@@ -24,17 +32,16 @@
             <h4>
                 <a href="#">@Model.Name</a>
             </h4>
-            <p>Color: @Model.Color</p>
-            @Html.DropDownList("Sizes",
-                  new SelectList(sizeList.Skip(1)),
-         sizeList[0],
-         new { @class = "form-control", id = "SizeOptions", onchange = @setPrice() })
-            @{
-        void setPrice()
-        {
-            ViewBag.Price = Products.Where(x => x.Name == Model.Name && x.Size == "document.getElementById('SizeOptions').");
-        }
-            }
+            @using (Html.BeginForm("ProductSummary", "Home"))
+            {
+                @Html.Hidden("prodName", Model.Name)
+                <p>Color: @Model.Color</p>
+                @Html.DropDownList("Sizes",
+                  new SelectList(sizeList),
+                  "Select a Size",
+                  new { @class = "form-control", id = "SizeOptions", onchange = "this.form.submit()" })
+             }
+
         </div>
         @using (Html.BeginForm("AddToCart", "Cart"))
         {
